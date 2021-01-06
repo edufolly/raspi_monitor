@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.jcraft:jsch:0.1.55'
+    compile 'io.github.cdimascio:dotenv-java:2.2.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    compile 'org.apache.xmlgraphics:batik-all:1.13'
+    compile 'com.twelvemonkeys.imageio:imageio-batik:3.6.1'
+    compile 'com.twelvemonkeys.imageio:imageio:3.6.1'
+}
+
+test {
+    useJUnitPlatform()
+}
