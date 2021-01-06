@@ -37,4 +37,12 @@ public class Icon {
         return Icon.get("4caf50");
     }
 
+    public static BufferedImage blue() {
+        return Icon.get("2196f3");
+    }
+
+    public static BufferedImage purple() {
+        return Icon.get("9c27b0");
+    }
+
 }

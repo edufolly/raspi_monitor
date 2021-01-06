@@ -1,8 +1,14 @@
 import java.net.InetAddress;
 
+@SuppressWarnings("BusyWait")
 public class StatusMonitor implements Runnable {
 
+    private final Main main;
     private boolean go = true;
+
+    public StatusMonitor(Main main) {
+        this.main = main;
+    }
 
     @Override
     public void run() {
@@ -10,14 +16,13 @@ public class StatusMonitor implements Runnable {
             try {
                 Config config = Config.getInstance();
                 InetAddress inet = InetAddress.getByName(config.getHost());
-
-                if (inet.isReachable(config.getPingTimeout())) {
-                    Config.getInstance().online();
-
-                } else {
-                    Config.getInstance().offline();
+                if (!main.isRunning()) {
+                    if (inet.isReachable(config.getPingTimeout())) {
+                        main.online();
+                    } else {
+                        main.offline();
+                    }
                 }
-
                 Thread.sleep(config.getPingSleep());
             } catch (Exception e) {
                 e.printStackTrace();

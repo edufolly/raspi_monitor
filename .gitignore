@@ -1,4 +1,4 @@
 .gradle
 .idea
 build
-.env
+raspi_monitor.env
