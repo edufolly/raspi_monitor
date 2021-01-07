@@ -9,6 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 
+/**
+ * @author Eduardo Folly
+ */
 public class Main {
 
     enum Status {
@@ -102,6 +105,7 @@ public class Main {
 
     private void refreshMenu() {
         PopupMenu popupMenu = new PopupMenu();
+        statusMenu.setEnabled(false);
         popupMenu.add(statusMenu);
 
         popupMenu.addSeparator();
@@ -180,6 +184,7 @@ public class Main {
         }
     }
 
+    @SuppressWarnings("BusyWait")
     private void raspiCommand(String command) {
         Session session = null;
         ChannelExec channel = null;

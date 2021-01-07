@@ -1,5 +1,8 @@
 package io.github.edufolly.raspi_monitor;
 
+/**
+ * @author Eduardo Folly
+ */
 public class Config {
 
     private static final Config INSTANCE;

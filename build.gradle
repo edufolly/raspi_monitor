@@ -1,9 +1,10 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
     id 'java'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'io.github.edufolly.raspi_monitor'
+version '0.0.1'
 
 repositories {
     mavenCentral()
@@ -21,4 +22,11 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes("Manifest-Version": project.version.toString(),
+                "Main-Class": "io.github.edufolly.raspi_monitor.Main")
+    }
 }

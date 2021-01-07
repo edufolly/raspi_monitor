@@ -8,6 +8,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.InputStream;
 
+/**
+ * @author Eduardo Folly
+ */
 public class Icon {
 
     public static BufferedImage get(String color) {

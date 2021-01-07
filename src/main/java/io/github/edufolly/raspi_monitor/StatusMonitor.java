@@ -2,7 +2,9 @@ package io.github.edufolly.raspi_monitor;
 
 import java.net.InetAddress;
 
-@SuppressWarnings("BusyWait")
+/**
+ * @author Eduardo Folly
+ */
 public class StatusMonitor implements Runnable {
 
     private final Main main;
@@ -12,6 +14,7 @@ public class StatusMonitor implements Runnable {
         this.main = main;
     }
 
+    @SuppressWarnings("BusyWait")
     @Override
     public void run() {
         while (go) {
