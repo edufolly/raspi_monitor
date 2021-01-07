@@ -8,6 +8,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import javax.swing.*;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * @author Eduardo Folly
@@ -23,7 +24,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
         String home = System.getProperty("user.home");
 
         Dotenv dotenv = Dotenv.configure()
@@ -50,6 +50,15 @@ public class Main {
 
         long pingSleep = Long.parseLong(dotenv.get("PING_SLEEP", "5000"));
         config.setPingSleep(pingSleep);
+
+        if (Taskbar.isTaskbarSupported()) {
+            try {
+                Taskbar taskbar = Taskbar.getTaskbar();
+                taskbar.setIconImage(Icon.get());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
 
         if (SystemTray.isSupported()) {
             try {

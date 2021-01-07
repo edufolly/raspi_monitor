@@ -6,12 +6,19 @@ import org.apache.commons.io.IOUtils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * @author Eduardo Folly
  */
 public class Icon {
+
+    public static BufferedImage get() throws IOException {
+        InputStream inputStream =
+                Icon.class.getResourceAsStream("/RaspiMonitor.svg");
+        return ImageIO.read(inputStream);
+    }
 
     public static BufferedImage get(String color) {
         try {
