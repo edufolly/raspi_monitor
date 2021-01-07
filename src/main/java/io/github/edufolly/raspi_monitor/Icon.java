@@ -1,3 +1,5 @@
+package io.github.edufolly.raspi_monitor;
+
 import com.twelvemonkeys.image.ResampleOp;
 import org.apache.commons.io.IOUtils;
 
@@ -11,7 +13,7 @@ public class Icon {
     public static BufferedImage get(String color) {
         try {
             InputStream inputStream =
-                    Icon.class.getResourceAsStream("icon.svg");
+                    Icon.class.getResourceAsStream("/icon.svg");
 
             String content = IOUtils.toString(inputStream);
 
@@ -19,7 +21,7 @@ public class Icon {
 
             BufferedImage image = ImageIO.read(IOUtils.toInputStream(content));
 
-            BufferedImageOp imageOp = new ResampleOp(14, 16,
+            BufferedImageOp imageOp = new ResampleOp(13, 16,
                                                      ResampleOp.FILTER_LANCZOS);
 
             return imageOp.filter(image, null);

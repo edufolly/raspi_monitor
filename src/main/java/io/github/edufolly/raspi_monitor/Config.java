@@ -1,3 +1,5 @@
+package io.github.edufolly.raspi_monitor;
+
 public class Config {
 
     private static final Config INSTANCE;

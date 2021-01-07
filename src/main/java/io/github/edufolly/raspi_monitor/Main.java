@@ -1,3 +1,5 @@
+package io.github.edufolly.raspi_monitor;
+
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
@@ -20,8 +22,6 @@ public class Main {
     public static void main(String[] args) {
 
         String home = System.getProperty("user.home");
-
-        System.out.println(home);
 
         Dotenv dotenv = Dotenv.configure()
                               .directory(home)

@@ -1,3 +1,5 @@
+package io.github.edufolly.raspi_monitor;
+
 import java.net.InetAddress;
 
 @SuppressWarnings("BusyWait")
