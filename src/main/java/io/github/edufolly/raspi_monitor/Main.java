@@ -1,13 +1,9 @@
 package io.github.edufolly.raspi_monitor;
 
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -94,6 +90,8 @@ public class Main {
     private StatusMonitor statusMonitor;
     private final MenuItem statusMenu = new MenuItem("Offline");
 
+    private InfoMonitor infoMonitor;
+
     public void setTrayIcon(TrayIcon trayIcon) {
         this.trayIcon = trayIcon;
     }
@@ -109,6 +107,10 @@ public class Main {
     public void start() {
         statusMonitor = new StatusMonitor(this);
         new Thread(statusMonitor).start();
+
+        infoMonitor = new InfoMonitor(this);
+        new Thread(infoMonitor).start();
+
         refreshMenu();
     }
 
@@ -187,60 +189,15 @@ public class Main {
 
     private void raspiShutdown() {
         if (status == Status.Online) {
-            raspiCommand("sudo shutdown now");
+            RaspiCommand.exec(this, "sudo shutdown now");
         } else {
             error();
         }
     }
 
-    @SuppressWarnings("BusyWait")
-    private void raspiCommand(String command) {
-        Session session = null;
-        ChannelExec channel = null;
-
-        running();
-
-        try {
-            Config config = Config.getInstance();
-
-            session = new JSch().getSession(config.getUsername(),
-                                            config.getHost(),
-                                            config.getPort());
-            session.setPassword(config.getPassword());
-            session.setConfig("StrictHostKeyChecking", "no");
-            session.connect();
-
-            channel = (ChannelExec) session.openChannel("exec");
-            channel.setCommand(command);
-
-            ByteArrayOutputStream responseStream = new ByteArrayOutputStream();
-            channel.setOutputStream(responseStream);
-            channel.connect();
-
-            while (channel.isConnected()) {
-                System.out.println("Running...");
-                Thread.sleep(500);
-            }
-
-            String responseString = responseStream.toString();
-            System.out.println(responseString);
-
-            idle();
-        } catch (Throwable t) {
-            error(t);
-        } finally {
-            if (session != null) {
-                session.disconnect();
-            }
-            if (channel != null) {
-                channel.disconnect();
-            }
-        }
-        System.out.println("Exit!");
-    }
-
     public void dispose() {
         statusMonitor.dispose();
+        infoMonitor.dispose();
         tray.remove(trayIcon);
         System.exit(0);
     }
