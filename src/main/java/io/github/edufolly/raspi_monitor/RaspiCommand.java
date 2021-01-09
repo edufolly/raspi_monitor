@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
  */
 public class RaspiCommand {
 
-    public static String exec(Main main, String... commands) {
+    public static String[] exec(Main main, int timeout, String... commands) {
         StringBuilder cmd = new StringBuilder();
 
         cmd.append("rm -f info.txt && ");
@@ -24,11 +24,11 @@ public class RaspiCommand {
 
         cmd.append("cat info.txt");
 
-        return exec(main, cmd.toString());
+        return exec(main, timeout, cmd.toString()).split("\\n\\[END]\\n?");
     }
 
     @SuppressWarnings("BusyWait")
-    public static String exec(Main main, String command) {
+    public static String exec(Main main, int timeout, String command) {
         Session session = null;
         ChannelExec channel = null;
         String responseString = null;
@@ -44,6 +44,7 @@ public class RaspiCommand {
                                             config.getHost(),
                                             config.getPort());
             session.setPassword(config.getPassword());
+            session.setTimeout(timeout);
             session.setConfig("StrictHostKeyChecking", "no");
             session.connect();
 

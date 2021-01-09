@@ -18,18 +18,17 @@ public class InfoMonitor implements Runnable {
         while (go) {
             try {
                 Config config = Config.getInstance();
-                String ret = RaspiCommand.exec(main,
-                        "cat /sys/class/net/eth0/address",
-                        "/opt/vc/bin/vcgencmd measure_temp",
-                        "cat /sys/class/thermal/thermal_zone0/temp",
-                        "top -b | head -n 5");
-                System.out.println(ret);
+                String[] ret = RaspiCommand
+                        .exec(main, config.getInfoTimeout(),
+                              "/opt/vc/bin/vcgencmd measure_temp",
+                              "cat /sys/class/thermal/thermal_zone0/temp",
+                              "top -b | head -n 5");
 
-//                String[] commands = ret.split("[END]");
-//                System.out.println(commands.length);
+                System.out.println(ret.length);
+                for (String s : ret) {
+                    System.out.println(s);
+                }
                 /*
-b8:27:eb:9a:b9:51
-[END]
 temp=55.8'C
 [END]
 55844
@@ -41,7 +40,6 @@ MiB Mem :    924.8 total,    636.1 free,     41.2 used,    247.6 buff/cache
 MiB Swap:    100.0 total,    100.0 free,      0.0 used.    814.4 avail Mem
 [END]
                  */
-
 
                 Thread.sleep(config.getInfoSleep());
             } catch (Throwable t) {

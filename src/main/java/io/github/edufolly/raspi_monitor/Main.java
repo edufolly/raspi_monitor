@@ -47,6 +47,9 @@ public class Main {
         long pingSleep = Long.parseLong(dotenv.get("PING_SLEEP", "5000"));
         config.setPingSleep(pingSleep);
 
+        int infoTimeout = Integer.parseInt(dotenv.get("INFO_TIMEOUT", "8000"));
+        config.setInfoTimeout(infoTimeout);
+
         long infoSleep = Long.parseLong(dotenv.get("INFO_SLEEP", "60000"));
         config.setInfoSleep(infoSleep);
 
@@ -75,11 +78,11 @@ public class Main {
                 tray.add(trayIcon);
 
                 main.start();
-            } catch (AWTException ex) {
+            } catch (AWTException | InterruptedException ex) {
                 ex.printStackTrace();
             }
         } else {
-            JOptionPane.showMessageDialog(null, "System Tray not suppoerted!");
+            JOptionPane.showMessageDialog(null, "System Tray not supported!");
         }
 
     }
@@ -107,9 +110,11 @@ public class Main {
         trayIcon.displayMessage(title, message, TrayIcon.MessageType.ERROR);
     }
 
-    public void start() {
+    public void start() throws InterruptedException {
         statusMonitor = new StatusMonitor(this);
         new Thread(statusMonitor).start();
+
+        Thread.sleep(2000);
 
         infoMonitor = new InfoMonitor(this);
         new Thread(infoMonitor).start();
@@ -192,7 +197,7 @@ public class Main {
 
     private void raspiShutdown() {
         if (status == Status.Online) {
-            RaspiCommand.exec(this, "sudo shutdown now");
+            RaspiCommand.exec(this, 10000, "sudo shutdown now");
         } else {
             error();
         }
