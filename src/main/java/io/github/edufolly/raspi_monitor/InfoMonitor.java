@@ -1,9 +1,21 @@
 package io.github.edufolly.raspi_monitor;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author Eduardo Folly
  */
 public class InfoMonitor implements Runnable {
+
+    @SuppressWarnings("RegExpRedundantEscape")
+    private static final Pattern gpuPattern = Pattern.compile("([\\d\\.]+)");
+
+    private static final Pattern idlePattern = Pattern
+            .compile("%.*\\s(\\d+\\.\\d) id");
+
+    private static final Pattern ramPattern = Pattern
+            .compile("Mem.*\\s(\\d+\\.\\d) total\\D+(\\d+\\.\\d) free");
 
     private final Main main;
     private boolean go = true;
@@ -16,30 +28,72 @@ public class InfoMonitor implements Runnable {
     @Override
     public void run() {
         while (go) {
+            Config config = Config.getInstance();
+            String gpuTemp = "?";
+            String cpuTemp = "?";
+            String cpuUsage = "?";
+            String ramFree = "?";
             try {
-                Config config = Config.getInstance();
-                String[] ret = RaspiCommand
-                        .exec(main, config.getInfoTimeout(),
-                              "/opt/vc/bin/vcgencmd measure_temp",
-                              "cat /sys/class/thermal/thermal_zone0/temp",
-                              "top -b | head -n 5");
+                try {
+                    String[] ret = RaspiCommand
+                            .exec(main, config.getInfoTimeout(),
+                                  "/opt/vc/bin/vcgencmd measure_temp",
+                                  "cat /sys/class/thermal/thermal_zone0/temp",
+                                  "top -b | head -n 5");
 
-                System.out.println(ret.length);
-                for (String s : ret) {
-                    System.out.println(s);
+                    try {
+                        Matcher gpuMatcher = gpuPattern.matcher(ret[0]);
+                        if (gpuMatcher.find()) {
+                            float f = Float.parseFloat(gpuMatcher.group());
+                            gpuTemp = String.format("%.1f˚C", f);
+                        }
+                    } catch (Throwable t) {
+                        main.error(t);
+                    }
+
+                    try {
+                        float temp = Float.parseFloat(ret[1]) / 1000f;
+                        cpuTemp = String.format("%.1f˚C", temp);
+                    } catch (Throwable t) {
+                        main.error(t);
+                    }
+
+                    try {
+                        Matcher idleMatcher = idlePattern.matcher(ret[2]);
+                        if (idleMatcher.find()) {
+                            float usage = 100f - Float
+                                    .parseFloat(idleMatcher.group(1));
+
+                            cpuUsage = String.format("%.1f%%", usage);
+                        }
+                    } catch (Throwable t) {
+                        main.error(t);
+                    }
+
+                    try {
+                        Matcher ramMatcher = ramPattern.matcher(ret[2]);
+                        if (ramMatcher.find()) {
+                            float totalRam =
+                                    Float.parseFloat(ramMatcher.group(1));
+
+                            float freeRam =
+                                    Float.parseFloat(ramMatcher.group(2));
+
+                            ramFree = String.format("%.1f%%",
+                                                    freeRam / totalRam * 100f);
+                        }
+                    } catch (Throwable t) {
+                        main.error(t);
+                    }
+
+                } catch (Throwable t) {
+                    main.error(t);
                 }
-                /*
-temp=55.8'C
-[END]
-55844
-[END]
-top - 20:40:39 up  3:13,  0 users,  load average: 0.00, 0.04, 0.08
-Tasks: 112 total,   1 running, 111 sleeping,   0 stopped,   0 zombie
-%Cpu(s):  2.8 us,  1.4 sy,  0.0 ni, 95.8 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
-MiB Mem :    924.8 total,    636.1 free,     41.2 used,    247.6 buff/cache
-MiB Swap:    100.0 total,    100.0 free,      0.0 used.    814.4 avail Mem
-[END]
-                 */
+
+                System.out.println("RAM Free: " + ramFree);
+                System.out.println("CPU Usage: " + cpuUsage);
+                System.out.println("CPU Temp: " + cpuTemp);
+                System.out.println("GPU Temp: " + gpuTemp);
 
                 Thread.sleep(config.getInfoSleep());
             } catch (Throwable t) {
