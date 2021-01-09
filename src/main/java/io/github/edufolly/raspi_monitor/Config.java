@@ -21,7 +21,7 @@ public class Config {
     private String password;
     private int pingTimeout;
     private long pingSleep;
-
+    private long infoSleep;
 
     private Config() {
     }
@@ -74,7 +74,12 @@ public class Config {
         this.pingSleep = pingSleep;
     }
 
+    public long getInfoSleep() {
+        return infoSleep;
+    }
 
-
+    public void setInfoSleep(long infoSleep) {
+        this.infoSleep = infoSleep;
+    }
 
 }

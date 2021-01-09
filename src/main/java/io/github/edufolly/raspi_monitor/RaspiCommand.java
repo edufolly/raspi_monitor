@@ -11,18 +11,20 @@ import java.io.ByteArrayOutputStream;
  */
 public class RaspiCommand {
 
-    public static String exec(String... commands) {
-
+    public static String exec(Main main, String... commands) {
         StringBuilder cmd = new StringBuilder();
+
         cmd.append("rm -f info.txt && ");
+
         for (String command : commands) {
             cmd.append(command.trim());
             cmd.append(" >> info.txt && ");
+            cmd.append("echo \"[END]\" >> info.txt && ");
         }
-        cmd.append("echo \"[EOF]\" >> info.txt && ");
+
         cmd.append("cat info.txt");
 
-        return exec(null, cmd.toString());
+        return exec(main, cmd.toString());
     }
 
     @SuppressWarnings("BusyWait")

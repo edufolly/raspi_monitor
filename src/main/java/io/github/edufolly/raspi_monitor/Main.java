@@ -41,11 +41,14 @@ public class Main {
         String password = dotenv.get("PASSWORD");
         config.setPassword(password);
 
-        int pingTimeout = Integer.parseInt(dotenv.get("PING_TIMEOUT", "5000"));
+        int pingTimeout = Integer.parseInt(dotenv.get("PING_TIMEOUT", "3000"));
         config.setPingTimeout(pingTimeout);
 
         long pingSleep = Long.parseLong(dotenv.get("PING_SLEEP", "5000"));
         config.setPingSleep(pingSleep);
+
+        long infoSleep = Long.parseLong(dotenv.get("INFO_SLEEP", "60000"));
+        config.setInfoSleep(infoSleep);
 
         if (Taskbar.isTaskbarSupported()) {
             try {
