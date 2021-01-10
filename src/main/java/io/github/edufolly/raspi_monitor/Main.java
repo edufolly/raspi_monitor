@@ -96,6 +96,11 @@ public class Main {
     private StatusMonitor statusMonitor;
     private final MenuItem statusMenu = new MenuItem("Offline");
 
+    private final MenuItem ramFreeMenu = new MenuItem();
+    private final MenuItem cpuUsageMenu = new MenuItem();
+    private final MenuItem cpuTempMenu = new MenuItem();
+    private final MenuItem gpuTempMenu = new MenuItem();
+
     private InfoMonitor infoMonitor;
 
     public void setTrayIcon(TrayIcon trayIcon) {
@@ -127,6 +132,20 @@ public class Main {
         statusMenu.setEnabled(false);
         popupMenu.add(statusMenu);
 
+        ramFreeMenu.setEnabled(false);
+        popupMenu.add(ramFreeMenu);
+
+        cpuUsageMenu.setEnabled(false);
+        popupMenu.add(cpuUsageMenu);
+
+        cpuTempMenu.setEnabled(false);
+        popupMenu.add(cpuTempMenu);
+
+        gpuTempMenu.setEnabled(false);
+        popupMenu.add(gpuTempMenu);
+
+        updateInfo(null, null, null, null);
+
         popupMenu.addSeparator();
 
         MenuItem shutdown = new MenuItem("Shutdown");
@@ -140,6 +159,30 @@ public class Main {
         popupMenu.add(exitMenu);
 
         trayIcon.setPopupMenu(popupMenu);
+    }
+
+    public void updateInfo(Float ramFree, Float cpuUsage, Float cpuTemp,
+                           Float gpuTemp) {
+
+        ramFreeMenu.setLabel(
+                ramFree == null
+                ? "RAM Free: ?"
+                : String.format("RAM Free: %.1f%%", ramFree));
+
+        cpuUsageMenu.setLabel(
+                cpuUsage == null
+                ? "CPU Use: ?"
+                : String.format("CPU Use: %.1f%%", cpuUsage));
+
+        cpuTempMenu.setLabel(
+                cpuTemp == null
+                ? "CPU Temp: ?"
+                : String.format("CPU Temp: %.1f˚C", cpuTemp));
+
+        gpuTempMenu.setLabel(
+                gpuTemp == null
+                ? "GPU Temp: ?"
+                : String.format("GPU Temp: %.1f˚C", gpuTemp));
     }
 
     public void online() {

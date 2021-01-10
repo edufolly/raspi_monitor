@@ -29,10 +29,12 @@ public class InfoMonitor implements Runnable {
     public void run() {
         while (go) {
             Config config = Config.getInstance();
-            String gpuTemp = "?";
-            String cpuTemp = "?";
-            String cpuUsage = "?";
-            String ramFree = "?";
+
+            Float gpuTemp = null;
+            Float cpuTemp = null;
+            Float cpuUsage = null;
+            Float ramFree = null;
+
             try {
                 try {
                     String[] ret = RaspiCommand
@@ -44,16 +46,14 @@ public class InfoMonitor implements Runnable {
                     try {
                         Matcher gpuMatcher = gpuPattern.matcher(ret[0]);
                         if (gpuMatcher.find()) {
-                            float f = Float.parseFloat(gpuMatcher.group());
-                            gpuTemp = String.format("%.1f˚C", f);
+                            gpuTemp = Float.parseFloat(gpuMatcher.group());
                         }
                     } catch (Throwable t) {
                         main.error(t);
                     }
 
                     try {
-                        float temp = Float.parseFloat(ret[1]) / 1000f;
-                        cpuTemp = String.format("%.1f˚C", temp);
+                        cpuTemp = Float.parseFloat(ret[1]) / 1000f;
                     } catch (Throwable t) {
                         main.error(t);
                     }
@@ -61,10 +61,8 @@ public class InfoMonitor implements Runnable {
                     try {
                         Matcher idleMatcher = idlePattern.matcher(ret[2]);
                         if (idleMatcher.find()) {
-                            float usage = 100f - Float
+                            cpuUsage = 100f - Float
                                     .parseFloat(idleMatcher.group(1));
-
-                            cpuUsage = String.format("%.1f%%", usage);
                         }
                     } catch (Throwable t) {
                         main.error(t);
@@ -79,8 +77,7 @@ public class InfoMonitor implements Runnable {
                             float freeRam =
                                     Float.parseFloat(ramMatcher.group(2));
 
-                            ramFree = String.format("%.1f%%",
-                                                    freeRam / totalRam * 100f);
+                            ramFree = freeRam / totalRam * 100f;
                         }
                     } catch (Throwable t) {
                         main.error(t);
@@ -90,10 +87,7 @@ public class InfoMonitor implements Runnable {
                     main.error(t);
                 }
 
-                System.out.println("RAM Free: " + ramFree);
-                System.out.println("CPU Usage: " + cpuUsage);
-                System.out.println("CPU Temp: " + cpuTemp);
-                System.out.println("GPU Temp: " + gpuTemp);
+                main.updateInfo(ramFree, cpuUsage, cpuTemp, gpuTemp);
 
                 Thread.sleep(config.getInfoSleep());
             } catch (Throwable t) {

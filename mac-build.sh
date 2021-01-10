@@ -30,3 +30,5 @@ cp mac_bundle/raspimonitor.icns "mac_bundle/wip/Raspi Monitor.app/Contents/Resou
 chmod 755 "mac_bundle/wip/Raspi Monitor.app"
 
 cp -R "mac_bundle/wip/Raspi Monitor.app" /Applications/
+
+rm -rf mac_bundle/wip
