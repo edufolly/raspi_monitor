@@ -62,7 +62,7 @@ public class RaspiCommand {
             responseString = responseStream.toString().trim();
 
             if (main != null) {
-                main.idle();
+                main.online();
             }
         } catch (Throwable t) {
             if (main != null) {

@@ -194,11 +194,17 @@ public class Main {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean isOffline() {
+        return status == Status.Offline;
+    }
+
     public void offline() {
         status = Status.Offline;
         if (status != lastStatus) {
             statusMenu.setLabel("Offline");
             trayIcon.setImage(Icon.red());
+            updateInfo(null, null, null, null);
             displayErrorMessage("Offline", "The host is down.");
             lastStatus = status;
         }
@@ -222,10 +228,6 @@ public class Main {
         lastStatus = Status.Idle;
     }
 
-    public void error() {
-        error(null);
-    }
-
     public void error(Throwable t) {
         if (t != null) {
             t.printStackTrace();
@@ -239,10 +241,8 @@ public class Main {
     }
 
     private void raspiShutdown() {
-        if (status == Status.Online) {
+        if (!isOffline()) {
             RaspiCommand.exec(this, 10000, "sudo shutdown now");
-        } else {
-            error();
         }
     }
 
